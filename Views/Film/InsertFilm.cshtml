@@ -1,0 +1,35 @@
+@model FilmList.Models.FilmDetails
+
+@{
+    ViewData["Title"] = "Insert Film";
+}
+
+<h2>Insert a new film</h2>
+
+<form asp-action="InsertFilm" method="post">
+
+    
+    <div class="form-group">
+        <label asp-for="Id"></label>
+        <input asp-for="Id" class="form-control" />
+        <span asp-validation-for="Id" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GenreId"></label>
+        <input asp-for="GenreId" class="form-control" />
+        <span asp-validation-for="GenreId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Insert</button>
+
+</form>
+
+<p> Antal poster som uppdateras: @ViewBag.rows </p>
+<p> Felmeddelande: @ViewBag.errorMessage </p>
