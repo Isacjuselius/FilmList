@@ -15,35 +15,6 @@ namespace FilmList.Controllers
         {
             return View();
         }
-        
-        /*[HttpPost]
-        public IActionResult InsertFilm(FilmDetails filmDetails)
-        {
-            if(!ModelState.IsValid)
-            {
-                return View();
-            }
-            
-            var filmMethods = new FilmMethods();
-            string errorMessage = "";
-            
-
-            filmMethods.InsertFilm(filmDetails, out errorMessage);
-
-            int rows = filmMethods.InsertFilm(filmDetails, out errorMessage);
-
-            if (rows == 1 && string.IsNullOrEmpty(errorMessage))
-            {
-                ViewBag.Message = "Film inserted successfully.";
-            }
-            else
-            {
-                ViewBag.Message = "Error inserting film: " + errorMessage;
-            }
-
-            return View();
-        }*/
-
 
         [HttpPost]
         public IActionResult InsertFilm(FilmDetails filmDetails)
@@ -60,6 +31,18 @@ namespace FilmList.Controllers
 
             ModelState.Clear();
             return View();
+        }
+
+        public IActionResult SelectFilm()
+        {
+            List<FilmDetails> filmDetailsList = new List<FilmDetails>();
+            FilmMethods filmMethods = new FilmMethods();
+            string errorMessage = "";
+            filmDetailsList = filmMethods.GetUserDetailsList(out errorMessage);
+
+            ViewBag.errorMessage = errorMessage;
+
+            return View(filmDetailsList);
         }
     }
 }

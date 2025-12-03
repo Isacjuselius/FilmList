@@ -24,6 +24,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmlsbS9JbnNlcnRGaWxtLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/isacj/edu/DoW/FilmList/Views/Film/SelectFilm.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmlsbS9TZWxlY3RGaWxtLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/isacj/edu/DoW/FilmList/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

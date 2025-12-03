@@ -144,3 +144,4 @@
 /Users/isacj/edu/DoW/FilmList/bin/Debug/net9.0/runtimes/win/lib/net9.0/System.Diagnostics.EventLog.dll
 /Users/isacj/edu/DoW/FilmList/bin/Debug/net9.0/runtimes/win/lib/net9.0/System.Security.Cryptography.Pkcs.dll
 /Users/isacj/edu/DoW/FilmList/obj/Debug/net9.0/FilmList.csproj.Up2Date
+/Users/isacj/edu/DoW/FilmList/obj/Debug/net9.0/FilmList.sourcelink.json

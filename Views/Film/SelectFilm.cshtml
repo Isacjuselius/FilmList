@@ -1,0 +1,42 @@
+@model IEnumerable<FilmList.Models.FilmDetails>
+
+@{
+    ViewData["Title"] = "Select film";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FilmTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GenreId)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FilmTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GenreId)
+            </td>
+
+            <td>
+                @Html.ActionLink("Edit", "EditReview", new { id=item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
