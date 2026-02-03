@@ -21,7 +21,7 @@ namespace FilmList.Models
             sqlConnection.ConnectionString = "Server=localhost;Database=FilmList;User Id=sa;Password=Isal0037;TrustServerCertificate=True;";
             
             //SQL-förfrågan för att infoga en ny film
-            String sqlstring = "INSERT INTO Film (FilmTitle, GenreId) VALUES (@FilmTitle, @GenreId)";
+            String sqlstring = "INSERT INTO dbo.Film (FilmTitle, GenreId) VALUES (@FilmTitle, @GenreId)";
 
             //Skapa ett SqlCommand-objekt för att skicka SQL-förfrågan till databasen
             SqlCommand sqlCommand = new SqlCommand(sqlstring, sqlConnection);
@@ -45,6 +45,7 @@ namespace FilmList.Models
             catch (Exception e)
             {
                 errorMessage = e.Message;
+                Console.WriteLine("INSERT ERROR: " + e.Message);
                 return 0;
             }
             finally
@@ -54,12 +55,12 @@ namespace FilmList.Models
             
         }
 
-        public List<FilmDetails> GetUserDetailsList(out string errorMessage)
+        public List<FilmDetails> GetFilmDetailsList(out string errorMessage)
         {
              //Skapa ett connection-objekt för att ansluta mot sql Server  
             SqlConnection sqlConnection = new SqlConnection();
 
-            //Skapa koppling till lokal instans av databas
+            //Skapa koppling till lokal databas
             sqlConnection.ConnectionString = "Server=localhost;Database=FilmList;User Id=sa;Password=Isal0037;TrustServerCertificate=True;";
             
             //SQL-förfrågan för att hämta alla filmer
@@ -68,7 +69,7 @@ namespace FilmList.Models
             //Skapa ett SqlCommand-objekt för att skicka SQL-förfrågan till databasen
             SqlCommand sqlCommand = new SqlCommand(sqlstring, sqlConnection);
 
-            //Skapa ett SqlDataAdapter-objekt för att fylla ett DataSet med data från databasen
+            //Skapa ett SqlDataAdapter-objekt för att fylla en DataTable med resultatet från SQL-förfrågan
             SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
 
             DataSet dataSet = new DataSet();
@@ -78,40 +79,107 @@ namespace FilmList.Models
             try{
                 
                 sqlConnection.Open();
+                
+                //Lägger till en tabell med namnet "Film" i DataSet-objektet och fyller den med resultatet från SQL-förfrågan
                 sqlDataAdapter.Fill(dataSet, "Film");
 
-                int i = 0;
-                int count = 0;
+                int count = dataSet.Tables["Film"].Rows.Count;
+                int i = 0;    
 
-                count = dataSet.Tables["Film"].Rows.Count;
-
-                if (count > 0){
-                    
+                if (count > 0)
+                {
                     while (i < count)
                     {
+                        //Läser ut varje rad från tabellen och skapar ett FilmDetails-objekt som läggs till i en lista
                         FilmDetails filmDetails = new FilmDetails();
-
-                        filmDetails.Id = Convert.ToInt32(dataSet.Tables["Film"].Rows[i]["FilmId"]);
+                        filmDetails.FilmId = Convert.ToInt16(dataSet.Tables["Film"].Rows[i]["FilmId"]);
                         filmDetails.FilmTitle = dataSet.Tables["Film"].Rows[i]["FilmTitle"].ToString();
-                        filmDetails.GenreId = Convert.ToInt32(dataSet.Tables["Film"].Rows[i]["GenreId"]);
+                        filmDetails.GenreId = Convert.ToInt16(dataSet.Tables["Film"].Rows[i]["GenreId"]);
 
                         filmDetailsList.Add(filmDetails);
-
                         i++;
                     }
                     errorMessage = "";
                     return filmDetailsList;
-                }else{
-                    errorMessage = "No films found.";
-                    return filmDetailsList;
                 }
-
-                
+                else
+                {
+                    errorMessage = "No films found.";
+                    return null;
+                }
+    
             }
             catch (Exception e)
             {
                 errorMessage = e.Message;
-                return filmDetailsList;
+                return null;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+
+        }
+
+        public List<FilmDetails> GetFilteredFilmDetailsList(int genreId, out string errorMessage)
+        {
+             //Skapa ett connection-objekt för att ansluta mot sql Server  
+            SqlConnection sqlConnection = new SqlConnection();
+
+            //Skapa koppling till lokal databas
+            sqlConnection.ConnectionString = "Server=localhost;Database=FilmList;User Id=sa;Password=Isal0037;TrustServerCertificate=True;";
+            
+            //SQL-förfrågan för att hämta alla filmer
+            String sqlstring = "SELECT * FROM Film WHERE GenreId = @GenreId";
+
+            //Skapa ett SqlCommand-objekt för att skicka SQL-förfrågan till databasen
+            SqlCommand sqlCommand = new SqlCommand(sqlstring, sqlConnection);
+            sqlCommand.Parameters.AddWithValue("@GenreId", genreId);
+
+            //Skapa ett SqlDataAdapter-objekt för att fylla en DataTable med resultatet från SQL-förfrågan
+            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+
+            DataSet dataSet = new DataSet();
+
+            List<FilmDetails> filmDetailsList = new List<FilmDetails>();
+
+            try{
+                
+                sqlConnection.Open();
+                
+                //Lägger till en tabell med namnet "Film" i DataSet-objektet och fyller den med resultatet från SQL-förfrågan
+                sqlDataAdapter.Fill(dataSet, "Film");
+
+                int count = dataSet.Tables["Film"].Rows.Count;
+                int i = 0;    
+
+                if (count > 0)
+                {
+                    while (i < count)
+                    {
+                        //Läser ut varje rad från tabellen och skapar ett FilmDetails-objekt som läggs till i en lista
+                        FilmDetails filmDetails = new FilmDetails();
+                        filmDetails.FilmId = Convert.ToInt16(dataSet.Tables["Film"].Rows[i]["FilmId"]);
+                        filmDetails.FilmTitle = dataSet.Tables["Film"].Rows[i]["FilmTitle"].ToString();
+                        filmDetails.GenreId = Convert.ToInt16(dataSet.Tables["Film"].Rows[i]["GenreId"]);
+
+                        filmDetailsList.Add(filmDetails);
+                        i++;
+                    }
+                    errorMessage = "";
+                    return filmDetailsList;
+                }
+                else
+                {
+                    errorMessage = "No films found.";
+                    return new List<FilmDetails>()  ;
+                }
+    
+            }
+            catch (Exception e)
+            {
+                errorMessage = e.Message;
+                return new List<FilmDetails>();
             }
             finally
             {

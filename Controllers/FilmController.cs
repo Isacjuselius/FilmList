@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FilmList.Models;
+using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace FilmList.Controllers
 {
@@ -20,29 +22,55 @@ namespace FilmList.Controllers
         public IActionResult InsertFilm(FilmDetails filmDetails)
         {
             FilmMethods filmMethods = new FilmMethods();
-            int i = 0;
             string error = "";
             
             //Ger 1 eller 0 beroende på om infogningen lyckades eller inte
-            i = filmMethods.InsertFilm(filmDetails, out error);
+            int i = filmMethods.InsertFilm(filmDetails, out error);
 
-            ViewBag.error = error;
-            ViewBag.rows = i;
+            if (i == 0)
+            {
+                ViewBag.error = "Ingen rad påverkades.";
+                return View();
+            } else
+            {
+                return RedirectToAction("SelectFilm");
+            }
 
-            ModelState.Clear();
-            return View();
+            
         }
 
         public IActionResult SelectFilm()
         {
-            List<FilmDetails> filmDetailsList = new List<FilmDetails>();
+            
             FilmMethods filmMethods = new FilmMethods();
             string errorMessage = "";
-            filmDetailsList = filmMethods.GetUserDetailsList(out errorMessage);
+            List<FilmDetails> filmDetailsList = filmMethods.GetFilmDetailsList(out errorMessage);
 
             ViewBag.errorMessage = errorMessage;
 
             return View(filmDetailsList);
+        }
+
+        [HttpGet]
+        public IActionResult FilterFilm()
+        {
+            return View();
+        }
+
+        [HttpPost]  
+        public IActionResult FilterFilm(int genre)
+        {
+            FilmMethods filmMethods = new FilmMethods();
+
+            if (genre == 0)
+            {
+                return RedirectToAction("SelectFilm");
+            }
+
+            List<FilmDetails> filteredFilmDetailsList = filmMethods.GetFilteredFilmDetailsList(genre,out string errorMessage);
+
+            ViewBag.errorMessage = errorMessage;
+            return View("SelectFilm", filteredFilmDetailsList);
         }
     }
 }
