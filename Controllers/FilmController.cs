@@ -84,5 +84,56 @@ namespace FilmList.Controllers
             ViewBag.errorMessage = errorMessage;
             return View("SelectFilm", filteredFilmDetailsList);
         }
+
+        public IActionResult DeleteFilm(int id)
+        {
+            FilmMethods filmMethods = new FilmMethods();
+            string errorMessage = "";
+            int i = filmMethods.DeleteFilmByID(id, out errorMessage);
+
+            if (i == 0)
+            {
+                ViewBag.errorMessage = "Ingen rad påverkades.";
+                return RedirectToAction("SelectFilm");
+            }
+            else
+            {
+                return RedirectToAction("SelectFilm");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult EditFilm(int id)
+        {
+            FilmMethods filmMethods = new FilmMethods();
+            string errorMessage = "";
+            FilmDetails filmDetails = filmMethods.GetFilmByID(id, out errorMessage);
+
+            if (filmDetails == null)
+            {
+                ViewBag.errorMessage = "Filmen hittades inte.";
+                return RedirectToAction("SelectFilm");
+            }
+            else
+            {
+                ViewBag.errorMessage = errorMessage;
+                return View(filmDetails);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult EditFilm(FilmDetails filmDetails)
+        {
+            FilmMethods filmMethods = new FilmMethods();
+            string errorMessage = "";
+
+            int i = filmMethods.EditFilmByFilmDetails(filmDetails, out errorMessage);
+            if (i == 0)
+            {
+                Console.WriteLine("No rows affected for film ID: " + filmDetails.FilmId);
+                ViewBag.errorMessage = "Ingen rad påverkades.";
+            }
+            return RedirectToAction("SelectFilm");
+        }
     }
 }

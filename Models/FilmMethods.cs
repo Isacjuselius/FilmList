@@ -187,6 +187,153 @@ namespace FilmList.Models
             }
 
         }
+
+        public int DeleteFilmByID(int filmId, out string errorMessage)
+        {
+            //Skapa ett connection-objekt för att ansluta mot sql Server  
+            SqlConnection sqlConnection = new SqlConnection();
+
+            //Skapa koppling till lokal instans av databas
+            sqlConnection.ConnectionString = "Server=localhost;Database=FilmList;User Id=sa;Password=Isal0037;TrustServerCertificate=True;";
+            
+            //SQL-förfrågan för att infoga en ny film
+            String sqlstring = "DELETE FROM dbo.Film WHERE FilmId = @FilmId";
+
+            //Skapa ett SqlCommand-objekt för att skicka SQL-förfrågan till databasen
+            SqlCommand sqlCommand = new SqlCommand(sqlstring, sqlConnection);
+            
+            //Skicka med parametrar till SQL-förfrågan
+            sqlCommand.Parameters.AddWithValue("@FilmId", filmId);
+
+            try{
+                
+                //Öppna anslutningen till databasen
+                sqlConnection.Open();
+
+                //Exekvera SQL-förfrågan och få antal påverkade rader (ett eller noll)
+                int rows = sqlCommand.ExecuteNonQuery();
+
+                errorMessage = "";
+                
+                return rows;
+            }
+            catch (Exception e)
+            {
+                errorMessage = e.Message;
+                Console.WriteLine("DELETE ERROR: " + e.Message);
+                return 0;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+            
+        }
+
+        public int EditFilmByFilmDetails(FilmDetails filmDetails, out string errorMessage)
+        {
+            //Skapa ett connection-objekt för att ansluta mot sql Server  
+            SqlConnection sqlConnection = new SqlConnection();
+
+            //Skapa koppling till lokal instans av databas
+            sqlConnection.ConnectionString = "Server=localhost;Database=FilmList;User Id=sa;Password=Isal0037;TrustServerCertificate=True;";
+            
+            //SQL-förfrågan för att uppdatera en film
+            String sqlstring = "UPDATE dbo.Film SET FilmTitle = @FilmTitle, GenreId = @GenreId WHERE FilmId = @FilmId";
+
+            //Skapa ett SqlCommand-objekt för att skicka SQL-förfrågan till databasen
+            SqlCommand sqlCommand = new SqlCommand(sqlstring, sqlConnection);
+            
+            //Skicka med parametrar till SQL-förfrågan
+            sqlCommand.Parameters.AddWithValue("@FilmTitle", filmDetails.FilmTitle);
+            sqlCommand.Parameters.AddWithValue("@GenreId", filmDetails.GenreId);
+            sqlCommand.Parameters.AddWithValue("@FilmId", filmDetails.FilmId);
+
+            try{
+                
+                //Öppna anslutningen till databasen
+                sqlConnection.Open();
+
+                //Exekvera SQL-förfrågan och få antal påverkade rader (ett eller noll)
+                int rows = sqlCommand.ExecuteNonQuery();
+
+                errorMessage = "";
+                
+                return rows;
+            }
+            catch (Exception e)
+            {
+                errorMessage = e.Message;
+                Console.WriteLine("UPDATE ERROR: " + e.Message);
+                return 0;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+            
+        }
+
+        public FilmDetails GetFilmByID(int filmId, out string errorMessage)
+        {
+            //Skapa ett connection-objekt för att ansluta mot sql Server  
+            SqlConnection sqlConnection = new SqlConnection();
+
+            FilmDetails filmDetails = new FilmDetails();
+
+            //Skapa koppling till lokal databas
+            sqlConnection.ConnectionString = "Server=localhost;Database=FilmList;User Id=sa;Password=Isal0037;TrustServerCertificate=True;";
+            
+            //SQL-förfrågan för att hämta en film baserat på ID
+            String sqlstring = "SELECT * FROM Film WHERE FilmId = @FilmId";
+
+            //Skapa ett SqlCommand-objekt för att skicka SQL-förfrågan till databasen
+            SqlCommand sqlCommand = new SqlCommand(sqlstring, sqlConnection);
+            sqlCommand.Parameters.AddWithValue("@FilmId", filmId);
+
+            //Skapa ett SqlDataAdapter-objekt för att fylla en DataTable med resultatet från SQL-förfrågan
+            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+
+            DataSet dataSet = new DataSet();
+
+            try{
+                
+                sqlConnection.Open();
+                
+                //Lägger till en tabell med namnet "Film" i DataSet-objektet och fyller den med resultatet från SQL-förfrågan
+                sqlDataAdapter.Fill(dataSet, "Film");
+
+                int count = dataSet.Tables["Film"].Rows.Count;
+
+                if (count > 0)
+                {
+                    //Läser ut den första raden från tabellen och skapar ett FilmDetails-objekt
+                    filmDetails.FilmId = Convert.ToInt16(dataSet.Tables["Film"].Rows[0]["FilmId"]);
+                    filmDetails.FilmTitle = dataSet.Tables["Film"].Rows[0]["FilmTitle"].ToString();
+                    filmDetails.GenreId = Convert.ToInt16(dataSet.Tables["Film"].Rows[0]["GenreId"]);
+
+                    errorMessage = "";
+                    return filmDetails;
+                }
+                else
+                {
+                    errorMessage = "No film found with the given ID.";
+                    filmDetails = null;
+                    return filmDetails;
+                }
+    
+            }
+            catch (Exception e)
+            {
+                errorMessage = e.Message;
+                filmDetails = null;
+                return filmDetails;
+            }
+            finally
+            {
+                sqlConnection.Close();
         
+            }
+        }
     }
 }
