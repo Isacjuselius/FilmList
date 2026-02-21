@@ -39,12 +39,24 @@ namespace FilmList.Controllers
             
         }
 
-        public IActionResult SelectFilm()
+        public IActionResult SelectFilm(string searchString, bool sorted)
         {
             
             FilmMethods filmMethods = new FilmMethods();
             string errorMessage = "";
             List<FilmDetails> filmDetailsList = filmMethods.GetFilmDetailsList(out errorMessage);
+
+            //om användaren sorterar
+            if(sorted)
+            {
+                filmDetailsList = filmDetailsList.OrderBy(f => f.FilmTitle).ToList();
+            }
+
+            if(!string.IsNullOrEmpty(searchString))
+            {
+                filmDetailsList = filmDetailsList.Where(f => f.FilmTitle.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
 
             ViewBag.errorMessage = errorMessage;
 

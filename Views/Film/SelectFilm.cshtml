@@ -5,7 +5,7 @@
     var films = Model ?? Enumerable.Empty<FilmList.Models.FilmDetails>();
 }
 
-<form asp-controller="Film" asp-action="FilterFilm" method="post" style="margin-bottom:20px;">
+<form asp-controller="Film" asp-action="FilterFilm" method="post">
     <label for="genre">Filter by genre</label>
 
     <select id="genre" name="genre">
@@ -17,10 +17,25 @@
 
     <button type="submit">Filter</button>
 
-    <a asp-action="SelectFilm" asp-controller="Film" style="margin-left:10px;">
+    <a asp-action="SelectFilm" asp-controller="Film">
         Show all
     </a>
 </form>
+<form asp-action="SelectFilm" method="get">
+    <input type="text"
+           name="searchString"
+           placeholder="Sök film..."
+           value="@Context.Request.Query["searchString"]" />
+
+    <input type="checkbox"
+        name="sorted"
+        value="true"
+        @(Context.Request.Query["sorted"] == "true" ? "checked" : "") />
+        Sort A–Ö
+    <button type="submit">Sök</button>
+</form>
+
+    
 
 <table class="table">
     <thead>
