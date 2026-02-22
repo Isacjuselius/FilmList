@@ -21,6 +21,11 @@ namespace FilmList.Controllers
         [HttpPost]
         public IActionResult InsertFilm(FilmDetails filmDetails)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(filmDetails);
+            }
+            
             FilmMethods filmMethods = new FilmMethods();
             string error = "";
             
@@ -63,12 +68,7 @@ namespace FilmList.Controllers
             return View(filmDetailsList);
         }
 
-        [HttpGet]
-        public IActionResult FilterFilm()
-        {
-            return View();
-        }
-
+    
         [HttpPost]  
         public IActionResult FilterFilm(int genre)
         {
