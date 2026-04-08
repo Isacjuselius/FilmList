@@ -21,7 +21,7 @@ namespace FilmList.Models
             sqlConnection.ConnectionString = "Server=localhost;Database=FilmList;User Id=sa;Password=Isal0037;TrustServerCertificate=True;";
             
             //SQL-förfrågan för att infoga en ny film
-            String sqlstring = "INSERT INTO dbo.Film (FilmTitle, GenreId) VALUES (@FilmTitle, @GenreId)";
+            String sqlstring = "INSERT INTO dbo.Film (FilmTitle, GenreId) VALUES (@FilmTitle, @GenreId)"; 
 
             //Skapa ett SqlCommand-objekt för att skicka SQL-förfrågan till databasen
             SqlCommand sqlCommand = new SqlCommand(sqlstring, sqlConnection);
